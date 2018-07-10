@@ -1,10 +1,50 @@
+# -*- coding: utf-8 -*-
 """
-SvgToCylinder - a macro to map an svg file to the face of a cylinder.
-By <TheMarkster>
-
-Requires installation of the Curves workbench by ChrisG (from the Tools -> Addon Manager)
-
+***************************************************************************
+*   Copyright (c) 2018 <TheMarkster>                                      *
+*                                                                         *
+*   This file is a supplement to the FreeCAD CAx development system.      *
+*                                                                         *
+*   This program is free software; you can redistribute it and/or modify  *
+*   it under the terms of the GNU Lesser General Public License (LGPL)    *
+*   as published by the Free Software Foundation; either version 2 of     *
+*   the License, or (at your option) any later version.                   *
+*                                                                         *
+*   This software is distributed in the hope that it will be useful,      *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU Library General Public License at http://www.gnu.org/licenses     *
+*   for more details.                                                     *
+*                                                                         *
+*   For more information about the GNU Library General Public License     *
+*   write to the Free Software Foundation, Inc., 59 Temple Place,         *
+*   Suite 330, Boston, MA  02111-1307 USA                                 *
+*                                                                         *
+***************************************************************************
 """
+
+#OS: Windows 10
+#Word size of OS: 64-bit
+#Word size of FreeCAD: 64-bit
+#Version: 0.17.13509 (Git)
+#Build type: Release
+#Branch: releases/FreeCAD-0-17
+#Hash: 0258808ccb6ba3bd5ea9312f79cd023f1a8671b7
+#Python version: 2.7.14
+#Qt version: 4.8.7
+#Coin version: 4.0.0a
+#OCC version: 7.2.0
+#Locale: English/UnitedStates (en_US)
+
+__title__ = "FCBmpImport"
+__author__ = "TheMarkster"
+__url__ = "https://github.com/mwganson/SvgToCylinder"
+__Wiki__ = "https://github.com/mwganson/SvgToCylinder/blob/master/README.md"
+__date__ = "2018.07.09" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
+__version__ = __date__
+
+VERSION_STRING = __title__ + ' Macro v0.' + __version__
+
 
 
 import FreeCAD
@@ -26,11 +66,9 @@ width = pixmap.width()
 importSVG.insert(name,"Unnamed")
 Gui.SendMsgToActiveView("ViewFit")
 
-App.ActiveDocument.removeObject('use12') #invalid for some reason, so chuck it
-
 #turn the inported objects into sketches
 for obj in App.ActiveDocument.Objects:
-    Draft.makeSketch(obj,autoconstraints=True)
+    Draft.makeSketch(obj,autoconstraints=False)
     App.ActiveDocument.removeObject(obj.Name)
 
 #merge the sketches into a single sketch
@@ -41,10 +79,12 @@ sketch = App.ActiveDocument.addObject('Sketcher::SketchObject','CombinedSketch')
 for obj in App.ActiveDocument.Objects:
     if obj.Label == sketch.Name:
         continue
-    for geo in obj.Geometry:
-        sketch.addGeometry(geo)
-    for con in obj.Constraints:
-        sketch.addConstraint(con)
+    if hasattr(obj,'Geometry'):    
+        for geo in obj.Geometry:
+            sketch.addGeometry(geo)
+    if hasattr(obj,'Constraints'):
+        for con in obj.Constraints:
+            sketch.addConstraint(con)
     App.ActiveDocument.removeObject(obj.Label)
 
 #make a cylinder to map the sketch to
@@ -87,7 +127,7 @@ for obj in sel:
 
     f.Base = App.ActiveDocument.getObject(obj.ObjectName)
     f.DirMode = "Custom"
-    f.Dir = App.Vector(obj.Object.Shape.CenterOfMass.x,obj.Object.Shape.CenterOfMass.y,0)
+    f.Dir = App.Vector(obj.Object.Shape.CenterOfMass.x,obj.Object.Shape.CenterOfMass.y,0).normalize()
     f.DirLink = None
     f.LengthFwd = 10.000000000000000
     f.LengthRev = 0.000000000000000
