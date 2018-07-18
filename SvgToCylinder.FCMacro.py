@@ -36,11 +36,11 @@
 #OCC version: 7.2.0
 #Locale: English/UnitedStates (en_US)
 
-__title__ = "FCBmpImport"
+__title__ = "SvgToCylinder"
 __author__ = "TheMarkster"
 __url__ = "https://github.com/mwganson/SvgToCylinder"
 __Wiki__ = "https://github.com/mwganson/SvgToCylinder/blob/master/README.md"
-__date__ = "2018.07.09" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
+__date__ = "2018.07.18" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
 __version__ = __date__
 
 VERSION_STRING = __title__ + ' Macro v0.' + __version__
@@ -113,35 +113,35 @@ App.ActiveDocument.getObject("Sketch_On_Surface").Scale = True
 sketch = App.ActiveDocument.getObject("Sketch_On_Surface")
 App.ActiveDocument.recompute()
 
-#use Draft.upgrade to turn the edges from the Sketch_On_Surface object into faces
-Draft.upgrade(sketch)
 
 #the faces will be conveniently selected for us when the draft upgrade process is complete
 #we extrude them along the normal by taking the center of mass x and y values, and using z = 0
 #works since we extrude symmetrically
 
+
+
+Draft.upgrade(sketch)
+
+sketchNames=[]
+sketchNames2=[]
 sel = Gui.Selection.getSelectionEx()
 for obj in sel:
-    
-    f = App.ActiveDocument.addObject('Part::Extrusion', 'Extrude')
+   
+    sketchNames.append(obj.ObjectName)
+    Gui.ActiveDocument.getObject(sketchNames[-1]).Visibility=False
+ 
 
-    f.Base = App.ActiveDocument.getObject(obj.ObjectName)
-    f.DirMode = "Custom"
-    f.Dir = App.Vector(obj.Object.Shape.CenterOfMass.x,obj.Object.Shape.CenterOfMass.y,0).normalize()
-    f.DirLink = None
-    f.LengthFwd = 10.000000000000000
-    f.LengthRev = 0.000000000000000
-    f.Solid = False
-    f.Reversed = False
-    f.Symmetric = True
-    f.TaperAngle = 0.000000000000000
-    f.TaperAngleRev = 0.000000000000000
-    Gui.ActiveDocument.Extrude.ShapeColor=Gui.ActiveDocument.Face.ShapeColor
-    Gui.ActiveDocument.Extrude.LineColor=Gui.ActiveDocument.Face.LineColor
-    Gui.ActiveDocument.Extrude.PointColor=Gui.ActiveDocument.Face.PointColor
-    f.Base.ViewObject.hide()
+for ii in range(0,len(sketchNames)):
+    Draft.scale([App.ActiveDocument.getObject(sketchNames[ii])],delta=FreeCAD.Vector(0.90,0.90,1.0),center=FreeCAD.Vector(0.0,0.0,0.0),copy=True,legacy=True)
+    sketchNames2.append(App.ActiveDocument.ActiveObject.Name)
+    Gui.ActiveDocument.getObject(sketchNames2[-1]).Visibility=False
 
+for ii in range(0,len(sketchNames)):
+    App.ActiveDocument.addObject('Part::Loft','Loft')
+    App.ActiveDocument.ActiveObject.Sections=[App.ActiveDocument.getObject(sketchNames[ii]), App.ActiveDocument.getObject(sketchNames2[ii]), ]
+    App.ActiveDocument.ActiveObject.Solid=True
 
+App.ActiveDocument.getObject("Cylinder").Height = str(height*10.0/9.0)
 Gui.SendMsgToActiveView("ViewFit")
 App.ActiveDocument.recompute()
 
