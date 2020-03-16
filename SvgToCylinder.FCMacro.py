@@ -23,24 +23,25 @@
 ***************************************************************************
 """
 
-#OS: Windows 10
+#OS: Windows 10 (10.0)
 #Word size of OS: 64-bit
 #Word size of FreeCAD: 64-bit
-#Version: 0.17.13509 (Git)
+#Version: 0.19.20036 (Git)
 #Build type: Release
-#Branch: releases/FreeCAD-0-17
-#Hash: 0258808ccb6ba3bd5ea9312f79cd023f1a8671b7
-#Python version: 2.7.14
-#Qt version: 4.8.7
+#Branch: master
+#Hash: 953ae1e6e917fa6860564c80fdc1f20950a5c0ac
+#Python version: 3.6.8
+#Qt version: 5.12.1
 #Coin version: 4.0.0a
-#OCC version: 7.2.0
-#Locale: English/UnitedStates (en_US)
+#OCC version: 7.3.0
+#Locale: English/United States (en_US)
+
 
 __title__ = "SvgToCylinder"
 __author__ = "TheMarkster"
 __url__ = "https://github.com/mwganson/SvgToCylinder"
 __Wiki__ = "https://github.com/mwganson/SvgToCylinder/blob/master/README.md"
-__date__ = "2018.07.18" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
+__date__ = "2020.03.15" #year.month.date and optional a,b,c, etc. subrevision letter, e.g. 2018.10.16a
 __version__ = __date__
 
 VERSION_STRING = __title__ + ' Macro v0.' + __version__
@@ -132,7 +133,7 @@ for obj in sel:
  
 
 for ii in range(0,len(sketchNames)):
-    Draft.scale([App.ActiveDocument.getObject(sketchNames[ii])],delta=FreeCAD.Vector(0.90,0.90,1.0),center=FreeCAD.Vector(0.0,0.0,0.0),copy=True,legacy=True)
+    Draft.scale([App.ActiveDocument.getObject(sketchNames[ii])],scale=FreeCAD.Vector(0.90,0.90,1.0),center=FreeCAD.Vector(0.0,0.0,0.0),copy=True)
     sketchNames2.append(App.ActiveDocument.ActiveObject.Name)
     Gui.ActiveDocument.getObject(sketchNames2[-1]).Visibility=False
 
