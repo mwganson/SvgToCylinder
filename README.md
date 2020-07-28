@@ -1,5 +1,8 @@
 # SvgToCylinder
 
+NOTE: THIS NO LONGER FUNCTIONS DUE TO SOME RECENT IMPROVEMENTS TO CURVES WORKBENCH
+LUCKILY THE NEW IMPROVEMENTS TO THE SKETCH ON SURFACE OBJECT IN CURVES WORKBENCH MAKES THIS NO LONGER NECESSARY
+
 Run the macro without any open document.  It will ask you to select the .svg file you wish to import.  It creates a cylinder with the appropriate height and radius (more or less) and then maps the imported .svg file (as a sketch) to the face of the cylinder, using tools from the Curves workbench, which is a prerequisite for using the macro.
 
 There is an online image converter that can create .svg files here:
